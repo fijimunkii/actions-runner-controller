@@ -1,5 +1,18 @@
 
 ---
+{{- $tls := fromYaml (include "generatedCert" .) }}
+{{- if .Values.admissionWebHooks.generatedCert.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "actions-runner-controller.servingCertName" . }}
+type: kubernetes.io/tls
+data:
+  ca.crt: {{ $tls.caCert }}
+  tls.crt: {{ $tls.clientCert }}
+  tls.key: {{ $tls.clientKey }}
+{{- end }}
+---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -20,6 +33,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ quote .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -48,6 +63,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -76,6 +93,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -104,6 +123,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -145,6 +166,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -173,6 +196,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
@@ -201,6 +226,8 @@ webhooks:
   clientConfig:
     {{- if .Values.admissionWebHooks.caBundle }}
     caBundle: {{ .Values.admissionWebHooks.caBundle }}
+    {{- else if .Values.admissionWebHooks.generatedCert.enabled }}
+    caBundle: {{ $tls.caCert }}
     {{- end }}
     service:
       name: {{ include "actions-runner-controller.webhookServiceName" . }}
